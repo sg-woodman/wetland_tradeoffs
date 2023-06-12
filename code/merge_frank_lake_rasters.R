@@ -76,7 +76,7 @@ minmax(fl_pan)
 
 # Save output -------------------------------------------------------------
 
-writeRaster(fl_multi_spec, here("data/raw/fl_multi_spec.tif"))
+writeRaster(fl_multi_spec, here("data/raw/fl_multi_spec.tif"), overwrite = T)
 
-writeRaster(fl_pan, here("data/raw/fl_panchrom.tif"))
+writeRaster(fl_pan, here("data/raw/fl_panchrom.tif"), overwrite = T)
 
