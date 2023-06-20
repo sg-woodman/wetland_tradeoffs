@@ -62,8 +62,6 @@ calc_nd <- function(b1, b2) {
 
 fl_multi_spec <- rast(here("data/raw/fl_multi_spec.tif"))
 
-names(fl_multi_spec) <- c("Coastal", "Blue", "Green", "Yellow", 
-                          "Red", "Red_Edge", "Near_IR1", "Near_IR2") 
 plot(fl_multi_spec)
 
 
@@ -150,9 +148,14 @@ plot(fl_mcari)
 
 
 ## Merge indeces into one multi band raster
-fl_indeces <- c(fl_ndvi1, fl_ndvi2, fl_wwi, fl_exg, fl_chlr_g, fl_chlr_re,
+fl_indices <- c(fl_ndvi1, fl_ndvi2, fl_wwi, fl_exg, fl_chlr_g, fl_chlr_re,
                     fl_gli, fl_cvi, fl_evi, fl_ndwi, fl_ndsi, fl_nhfd, fl_mcari)
 
-plot(fl_indeces)
+plot(fl_indices)
 
-writeRaster(fl_veg_indeces, here("data/processed/fl_indices.tif"))
+writeRaster(fl_veg_indeces, here("data/processed/fl_indices.tif"), overwrite = T,
+            names = c("NDVI1","NDVI2","WWI","ExG","Chlr_g","Chlr_redEdge","GLI",
+                      "CVI","EVI","NDWI","NDSI","NHFD","MCARI"))
+
+
+
