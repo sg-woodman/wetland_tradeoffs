@@ -32,8 +32,12 @@ library(terra)
 # Load data ---------------------------------------------------------------
 
 fl <- vect(here("data/raw/fl_hydrolake_polygon.gpkg"))
+
 fl_shoreline_boundary <- vect(here("data/raw/fl_shoreline_boundary.gpkg"))
 fl_shoreline_edge <- vect(here("data/raw/fl_shoreline_edge.gpkg"))
+
+fl_shoreline_boundary_pan <- vect(here("data/raw/fl_shoreline_boundary_pan.gpkg"))
+fl_shoreline_edge_pan <- vect(here("data/raw/fl_shoreline_edge_pan.gpkg"))
 
 
 # Process data ------------------------------------------------------------
@@ -69,6 +73,7 @@ length(cells(test))
 ### precise since adding more area will only include water pixels that are more 
 ### easily identifiable.
 
+### Google Earth View
 #### visualize zones 
 plot(fl_shoreline_boundary)
 lines(fl_shoreline_edge)
@@ -79,4 +84,17 @@ plot(fl_veg_zone)
 
 #### save output
 writeVector(fl_veg_zone, here("data/processed/fl_veg_zone.gpkg"))
+
+### WorldView Pan
+#### visualize zones 
+plot(fl_shoreline_boundary_pan)
+lines(fl_shoreline_edge_pan)
+
+#### remove inner boundary from outer
+fl_veg_zone_pan <- erase(fl_shoreline_boundary_pan, fl_shoreline_edge_pan)
+plot(fl_veg_zone_pan)
+
+#### save output
+writeVector(fl_veg_zone_pan, here("data/processed/fl_veg_zone_pan.gpkg"))
+
 
