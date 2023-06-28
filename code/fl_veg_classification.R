@@ -34,26 +34,48 @@ fl_multi_spec <- rast(here("data/raw/fl_multi_spec.tif"))
 fl_indices <- rast(here("data/processed/fl_indices.tif"))
 
 ## Vector
+### outer boundary of vegetation delineated using Google Earth imagery
 fl_shoreline_boundary <- vect(here("data/raw/fl_shoreline_boundary.gpkg"))
+### vegetation zone using the Google earth delineated shoreline boundary and edge
 fl_veg_zone <- vect(here("data/processed/fl_veg_zone.gpkg"))
 
-
+### outer boundary of vegetation delineated using panchromatic imagery
+fl_shoreline_boundary_pan <- vect(here("data/raw/fl_shoreline_boundary_pan.gpkg"))
+### vegetation zone using the panchromatic delineated shoreline boundary and edge
 fl_veg_zone_pan <- vect(here("data/processed/fl_veg_zone_pan.gpkg"))
 
-### Training polygons
+### training polygons identifying water, veg, algae, bare ground, and structures
 fl_train_poly <- vect(here("data/raw/fl_training_data.gpkg"))
 
 
 
-# Extract veg zone --------------------------------------------------------
 
-fl_ms_zone <- mask(crop(fl_multi_spec, fl_veg_zone), fl_veg_zone)
-plot(fl_ms_zone)
+# Extract areas of interest -----------------------------------------------
 
-fl_ind_zone <- crop(mask(fl_indices, fl_veg_zone), fl_veg_zone)
-plot(fl_ind_zone[[13]])
+## combine raw bands and indices to limited repeated code
+fl_rast <- c(fl_multi_spec, fl_indices) 
 
-fl_ind_zone[[4]]
+## Basin 1
+### Full area
+#### google earth 
+fl_rast_b1 <- mask(crop(fl_rast, fl_shoreline_boundary),
+                 fl_shoreline_boundary) 
+plot(fl_rast_b1)
+#### panchromatic
+fl_rast_b1_pan <- mask(crop(fl_rast, fl_shoreline_boundary_pan),
+                   fl_shoreline_boundary_pan) 
+plot(fl_rast_b1_pan)
+
+### Vegetation zone
+#### google veg zone
+fl_b1_veg_zone <- mask(crop(fl_rast, fl_veg_zone), fl_veg_zone)
+plot(fl_b1_veg_zone)
+plot(fl_b1_veg_zone[[13]])
+
+#### panchromatic veg zone
+fl_b1_veg_zone_pan <- mask(crop(fl_rast, fl_veg_zone_pan), fl_veg_zone_pan)
+plot(fl_b1_veg_zone_pan)
+plot(fl_b1_veg_zone_pan[[13]])
 
 
 # Model -------------------------------------------------------------------
@@ -76,34 +98,54 @@ plot(fl_ind_b1_full)
 #### Run PCA
 ##### Raw bands 
 pca_ms <- prcomp(fl_ms_b1_full)
+summary(pca_ms)
 pca_ms_pred <- predict(fl_ms_b1_full, pca_ms)
 plot(pca_ms_pred)
 
 ##### RGB
 pca_rgb <- prcomp(fl_ms_b1_full[[c("Red", "Green", "Blue")]])
+summary(pca_rgb)
 pca_rgb_pred <- predict(fl_ms_b1_full, pca_rgb)
 plot(pca_rgb_pred)
 
 ##### Indices 
 pca_ind <- prcomp(fl_ind_b1_full)
+summary(pca_ind)
 pca_ind_pred <- predict(fl_ind_b1_full, pca_ind)
 plot(pca_ind_pred)
 
 ##### Curated Indices 1
 pca_cur_ind1 <- prcomp(fl_ind_b1_full[[c("NDVI1", "Chlr_g", "Chlr_redEdge", 
                                         "EVI", "NDWI")]])
+summary(pca_ms)
 pca_cur_ind_pred1 <- predict(fl_ind_b1_full, pca_cur_ind1)
 plot(pca_cur_ind_pred1[[3]])
 
 ##### Curated Indices 2
 pca_cur_ind2 <- prcomp(fl_ind_b1_full[[c("Chlr_g", "Chlr_redEdge", "NDWI")]])
+summary(pca_ms)
 pca_cur_ind_pred2 <- predict(fl_ind_b1_full, pca_cur_ind2)
 plot(pca_cur_ind_pred2[[3]])
 
-writeRaster(pca_cur_ind_pred, here("tmp/curated_indices_pca2.tif"))
+writeRaster(pca_ind_pred, here("tmp/ind_pca.tif"))
 
+
+#### Outcome ----
+#### PCA on the raw bands and all indices appear less able to group pixels 
+#### according to land cover. This is likely due to the large number of vectors
+#### used. Selecting specific vectors, such as RGB or indices that appear 
+#### visually important (NDVI, EVI, Chlr, NDWI) better highlight vegetation, 
+#### algae, and water. 
+#### 
+#### Clustering may be needed to categories pca pixel values to discrete land
+#### cover types. 
 
 ### K-mean clustering ----
+library(cluster)
+#### Data can be clustered based on single bands or raster stacks. For our 
+#### purpose, multiple bands will be better for clustering since algal blooms
+#### appear similarly to emergent vegetation for most greenness based metrics. 
+
 names(fl_indices)
 fl_ind_b1 <- crop(fl_indices, fl_veg_zone)
 
