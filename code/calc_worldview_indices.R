@@ -87,9 +87,11 @@ plot(fl_wwi)
 
 ## Excesss Greenness (ExG)
 ### From In Flights data presentation given to Larry
-fl_exg <- 2*fl_multi_spec[["Green"]] - fl_multi_spec[["Red"]] - fl_multi_spec[["Blue"]]
+fl_exg <- 2*fl_multi_spec[["Green"]] - (fl_multi_spec[["Red"]] + fl_multi_spec[["Blue"]])
 names(fl_exg) <- c("ExG")
 plot(fl_exg)
+fl_exg_corr <- clamp(fl_exg, lower = 0)
+plot(fl_exg_corr)
 
 ## Chlorophyll green
 ### https://www.researchgate.net/figure/Vegetation-indices-calculated-from-Worldview-2-data_tbl1_335679774
@@ -148,13 +150,13 @@ plot(fl_mcari)
 
 
 ## Merge indeces into one multi band raster
-fl_indices <- c(fl_ndvi1, fl_ndvi2, fl_wwi, fl_exg, fl_chlr_g, fl_chlr_re,
+fl_indices <- c(fl_ndvi1, fl_ndvi2, fl_exg, fl_chlr_g, fl_chlr_re,
                     fl_gli, fl_cvi, fl_evi, fl_ndwi, fl_ndsi, fl_nhfd, fl_mcari)
 
 plot(fl_indices)
 
-writeRaster(fl_veg_indeces, here("data/processed/fl_indices.tif"), overwrite = T,
-            names = c("NDVI1","NDVI2","WWI","ExG","Chlr_g","Chlr_redEdge","GLI",
+writeRaster(fl_indices, here("data/processed/fl_indices.tif"), overwrite = T,
+            names = c("NDVI1","NDVI2","ExG","Chlr_g","Chlr_redEdge","GLI",
                       "CVI","EVI","NDWI","NDSI","NHFD","MCARI"))
 
 
