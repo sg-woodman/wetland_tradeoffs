@@ -61,6 +61,7 @@ rsconnect/
 data/
 tmp/
 snippets/
+output/
 
 # Other
 .DS_Store
