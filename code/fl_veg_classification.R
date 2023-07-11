@@ -35,18 +35,15 @@ fl_indices <- rast(here("data/processed/fl_indices.tif"))
 
 ## Vector
 ### outer boundary of vegetation delineated using Google Earth imagery
-fl_shoreline_boundary <- vect(here("data/raw/fl_shoreline_boundary.gpkg"))
+fl_b1_shoreline_boundary <- vect(here("data/raw/fl_b1_shoreline_boundary.gpkg"))
 ### vegetation zone using the Google earth delineated shoreline boundary and edge
-fl_veg_zone <- vect(here("data/processed/fl_veg_zone.gpkg"))
-
-### outer boundary of vegetation delineated using panchromatic imagery
-fl_shoreline_boundary_pan <- vect(here("data/raw/fl_shoreline_boundary_pan.gpkg"))
-### vegetation zone using the panchromatic delineated shoreline boundary and edge
-fl_veg_zone_pan <- vect(here("data/processed/fl_veg_zone_pan.gpkg"))
+fl_b1_veg_zone <- vect(here("data/processed/fl_b1_veg_zone.gpkg"))
 
 ### training polygons identifying water, veg, algae, bare ground, and structures
-fl_train_poly <- vect(here("data/raw/fl_training_data.gpkg"))
+fl_b1_train_poly <- vect(here("data/raw/fl_b1_training_data.gpkg"))
 
+### Veg regions
+fl_veg_zones_b1 <- vect(here("data/processed/fl_basin1_veg_zones.gpkg"))
 
 
 
@@ -58,24 +55,31 @@ fl_rast <- c(fl_multi_spec, fl_indices)
 ## Basin 1
 ### Full area
 #### google earth 
-fl_rast_b1 <- mask(crop(fl_rast, fl_shoreline_boundary),
-                 fl_shoreline_boundary) 
+fl_rast_b1_full <- crop(fl_rast, fl_b1_shoreline_boundary)
+plot(fl_rast_b1_full)
+plot(fl_rast_b1_full[[13]])
+
+
+### Crop/Rangeland removed
+#### google earth 
+fl_rast_b1 <- mask(crop(fl_rast, fl_b1_shoreline_boundary),
+                        fl_b1_shoreline_boundary) 
 plot(fl_rast_b1)
-#### panchromatic
-fl_rast_b1_pan <- mask(crop(fl_rast, fl_shoreline_boundary_pan),
-                   fl_shoreline_boundary_pan) 
-plot(fl_rast_b1_pan)
+plot(fl_rast_b1[[13]])
+
 
 ### Vegetation zone
 #### google veg zone
-fl_b1_veg_zone <- mask(crop(fl_rast, fl_veg_zone), fl_veg_zone)
+fl_b1_veg_zone <- mask(crop(fl_rast, fl_b1_veg_zone), fl_b1_veg_zone)
 plot(fl_b1_veg_zone)
 plot(fl_b1_veg_zone[[13]])
 
-#### panchromatic veg zone
-fl_b1_veg_zone_pan <- mask(crop(fl_rast, fl_veg_zone_pan), fl_veg_zone_pan)
-plot(fl_b1_veg_zone_pan)
-plot(fl_b1_veg_zone_pan[[13]])
+
+# Visualise ---------------------------------------------------------------
+
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "EVI", "NDWI")]]), fl_b1_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "NHFD", "NDWI")]]), fl_b1_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("EVI", "Chlr_redEdge", "NDWI")]]), fl_b1_shoreline_boundary))
 
 
 # Model -------------------------------------------------------------------
@@ -88,44 +92,43 @@ library(stats)
 #### variables). Each Axis can then be manually inspected to see which 
 #### variables they are most associated with. 
 
-#### Crop data to basin 1 veg zone
-fl_ms_b1_full <- crop(fl_multi_spec, fl_veg_zone)
-plot(fl_ms_b1_full)
-
-fl_ind_b1_full <- crop(fl_indices, fl_veg_zone)
-plot(fl_ind_b1_full)
-
 #### Run PCA
+names(fl_rast_b1_full)
 ##### Raw bands 
-pca_ms <- prcomp(fl_ms_b1_full)
+pca_ms <- prcomp(fl_rast_b1_full[[c(1:8)]])
 summary(pca_ms)
-pca_ms_pred <- predict(fl_ms_b1_full, pca_ms)
+pca_ms_pred <- predict(fl_rast_b1_full, pca_ms)
 plot(pca_ms_pred)
+plotRGB(stretch(pca_ms_pred))
 
 ##### RGB
-pca_rgb <- prcomp(fl_ms_b1_full[[c("Red", "Green", "Blue")]])
+pca_rgb <- prcomp(fl_rast_b1_full[[c("Red", "Green", "Blue")]])
 summary(pca_rgb)
-pca_rgb_pred <- predict(fl_ms_b1_full, pca_rgb)
+pca_rgb_pred <- predict(fl_rast_b1_full, pca_rgb)
 plot(pca_rgb_pred)
+plotRGB(stretch(pca_rgb_pred))
 
 ##### Indices 
-pca_ind <- prcomp(fl_ind_b1_full)
+pca_ind <- prcomp(scale(fl_rast_b1_full[[c(9:20)]]))
 summary(pca_ind)
-pca_ind_pred <- predict(fl_ind_b1_full, pca_ind)
+pca_ind_pred <- predict(fl_rast_b1_full, pca_ind)
 plot(pca_ind_pred)
+plotRGB(stretch(pca_ind_pred))
 
 ##### Curated Indices 1
-pca_cur_ind1 <- prcomp(fl_ind_b1_full[[c("NDVI1", "Chlr_g", "Chlr_redEdge", 
-                                        "EVI", "NDWI")]])
-summary(pca_ms)
-pca_cur_ind_pred1 <- predict(fl_ind_b1_full, pca_cur_ind1)
-plot(pca_cur_ind_pred1[[3]])
+pca_cur_ind1 <- prcomp(scale(fl_rast_b1_full[[c("NDVI1", "Chlr_g", "Chlr_redEdge", 
+                                        "EVI", "NDWI")]]))
+summary(pca_cur_ind1)
+pca_cur_ind_pred1 <- predict(fl_rast_b1_full, pca_cur_ind1)
+plot(pca_cur_ind_pred1[[1]])
+plotRGB(stretch(pca_cur_ind_pred1))
 
 ##### Curated Indices 2
-pca_cur_ind2 <- prcomp(fl_ind_b1_full[[c("Chlr_g", "Chlr_redEdge", "NDWI")]])
-summary(pca_ms)
-pca_cur_ind_pred2 <- predict(fl_ind_b1_full, pca_cur_ind2)
-plot(pca_cur_ind_pred2[[3]])
+pca_cur_ind2 <- prcomp(scale(fl_rast_b1_full[[c("Chlr_g", "Chlr_redEdge", "NDWI")]]))
+summary(pca_cur_ind2)
+pca_cur_ind_pred2 <- predict(fl_rast_b1_full, pca_cur_ind2)
+plot(pca_cur_ind_pred2[[1]])
+plotRGB(stretch(pca_cur_ind_pred2))
 
 writeRaster(pca_ind_pred, here("tmp/ind_pca.tif"))
 
@@ -138,36 +141,92 @@ writeRaster(pca_ind_pred, here("tmp/ind_pca.tif"))
 #### algae, and water. 
 #### 
 #### Clustering may be needed to categories pca pixel values to discrete land
-#### cover types. 
+#### cover types. PCA also does not allow for NAs which means the surrounding
+#### crop/rangeland are include. 
 
 ### K-mean clustering ----
 library(cluster)
 #### Data can be clustered based on single bands or raster stacks. For our 
 #### purpose, multiple bands will be better for clustering since algal blooms
 #### appear similarly to emergent vegetation for most greenness based metrics. 
+#### https://gis.stackexchange.com/questions/123639/unsupervised-classification-with-kmeans-in-r
 
-names(fl_indices)
-fl_ind_b1 <- crop(fl_indices, fl_veg_zone)
-
-plot(fl_ind_b1[[10]])
-
-ndvi <- fl_ind_b1[[10]]
-nr <- values(ndvi)
-
+#### raw bands
+##### convert raster to df without removing NAs
+fl_ms_b1_df <- as.data.frame(fl_b1_veg_zone[[c(1:8)]], na.rm = F)
+##### create an index of cell values 
+idx_ms_b1 <- as.data.frame(fl_b1_veg_zone[[c(1:8)]], na.rm = F, cells = T) %>% 
+  pull(cell)
+##### remove all NAs from idex
+idx_ms_b1 <- idx_ms_b1[-unique(which(is.na(fl_ms_b1_df), arr.ind=TRUE)[,1])]  
+##### cluster, remove NAs and scale
 set.seed(1284)
-# We want to create 10 clusters, allow 500 iterations, start with 5 random sets using "Lloyd" method
-kmncluster <- kmeans(na.omit(nr), centers = 4, iter.max = 500, nstart = 5, algorithm="Lloyd")
-# kmeans returns an object of class "kmeans"
-str(kmncluster)
+fl_clus_ms_b1 <- cluster::clara(na.omit(scale(fl_ms_b1_df)), k=4)
+##### plot
+clust_ms_b1 <- fl_b1_veg_zone[[1]] 
+clust_ms_b1[] <- NA
+clust_ms_b1[idx_ms_b1] <- fl_clus_ms_b1$clustering
+plot(clust_ms_b1) 
+writeRaster(clust_ms_b1, here("tmp/clust_ms_b1.tif"), overwrite = T)
 
-# Use the ndvi object to set the cluster values to a new raster
-knr <- setValues(ndvi, kmncluster$cluster)
-knr
-plot(knr)
+#### indices
+##### convert raster to df without removing NAs
+fl_ind_b1_df <- as.data.frame(fl_b1_veg_zone[[c(9:20)]], na.rm = F)
+##### create an index of cell values 
+idx_ind_b1 <- as.data.frame(fl_b1_veg_zone[[c(9:20)]], na.rm = F, cells = T) %>% 
+  pull(cell)
+##### remove all NAs from idex
+idx_ind_b1 <- idx_ind_b1[-unique(which(is.na(fl_ind_b1_df), arr.ind=TRUE)[,1])]  
+##### cluster, remove NAs and scale
+set.seed(1284)
+fl_clus_ind_b1 <- cluster::clara(na.omit(scale(fl_ind_b1_df)), k=4)
+##### plot
+clust_ind_b1 <- fl_b1_veg_zone[[1]] 
+clust_ind_b1[] <- NA
+clust_ind_b1[idx_ms_b1] <- fl_clus_ind_b1$clustering
+plot(clust_ind_b1) 
+writeRaster(clust_ind_b1, here("tmp/clust_ind_b1.tif"), overwrite = T)
 
-knr_mask <- mask(setValues(ndvi, kmncluster$cluster), fl_veg_zone)
-knr_mask
-plot(knr_mask)
+
+#### all data
+##### convert raster to df without removing NAs
+fl_all_b1_df <- as.data.frame(fl_b1_veg_zone, na.rm = F)
+##### create an allex of cell values 
+idx_all_b1 <- as.data.frame(fl_b1_veg_zone, na.rm = F, cells = T) %>% 
+  pull(cell)
+##### remove all NAs from idex
+idx_all_b1 <- idx_all_b1[-unique(which(is.na(fl_all_b1_df), arr.ind=TRUE)[,1])]  
+##### cluster, remove NAs and scale
+set.seed(1284)
+fl_clus_all_b1 <- cluster::clara(na.omit(scale(fl_all_b1_df)), k=4)
+##### plot
+clust_all_b1 <- fl_b1_veg_zone[[1]] 
+clust_all_b1[] <- NA
+clust_all_b1[idx_all_b1] <- fl_clus_all_b1$clustering
+plot(clust_all_b1) 
+writeRaster(clust_all_b1, here("tmp/clust_all_b1.tif"), overwrite = T)
+
+aoi_poly <- as.polygons(aoi)
+
+ggplot() + 
+  geom_spatraster_rgb(data = crop(fl_multi_spec[[c("Red", "Green", "Blue")]], aoi_poly)) +
+  geom_spatraster(data = as.factor(crop(clust_all_b1, aoi_poly)), 
+                  alpha = 0.05) + 
+  scale_fill_manual(values = c("red", "green", "blue", "yellow", "orange"),
+                    na.translate = F) + 
+  theme_classic()
+
+
+#### Outcome ----
+#### Clara clustering (a method similar to K-mean clustering for large data) 
+#### appears to predict vegetation cover well. Visual inspection shows the model
+#### accurately identifies water and algae. Bare/less vegetated patches seem 
+#### less well identified, however, this may be due to the coarse resolution 
+#### making it difficult to identify these visually. 
+
+
+
+
 
 ### SOM clustering ----
 
@@ -210,20 +269,20 @@ tail(ads.cluster, 10)
 ## Supervised classifiaction ----
 ### Random Forest ----
 #### https://geoscripting-wur.github.io/AdvancedRasterAnalysis/
-fl_b1 <- mask(crop(c(fl_multi_spec, fl_indices), fl_veg_zone), fl_shoreline_boundary)
+fl_b1 <- mask(crop(c(fl_multi_spec, fl_indices), fl_bq_veg_zone), fl_b1_shoreline_boundary)
 plot(fl_b1)
 
 plot(fl_b1[[1]])
-plot(fl_train_poly, add = T)
+plot(fl_b1_train_poly, add = T)
 
-fl_train_poly$type <- as.factor(fl_train_poly$type)
-fl_train_poly$code <- as.numeric(fl_train_poly$type)
+fl_b1_train_poly$type <- as.factor(fl_b1_train_poly$type)
+fl_b1_train_poly$code <- as.numeric(fl_b1_train_poly$type)
 
 # Extract pixel values below the polygons into a dataframe
-trainingData <- extract(fl_b1, fl_train_poly, na.rm = T)
+trainingData <- extract(fl_b1, fl_b1_train_poly, na.rm = T)
 
 # Add a column specifying the class based on the polygon ID
-trainingData$type <- fl_train_poly$type[trainingData$ID]
+trainingData$type <- fl_b1_train_poly$type[trainingData$ID]
 
 # Remove the training polygon ID's from the dataframe
 trainingData$ID <- NULL
@@ -273,13 +332,19 @@ plot(predLC)
 ### CART ----
 library(rpart)
 
-fl_b1 <- mask(crop(c(fl_multi_spec, fl_indices), fl_veg_zone), fl_shoreline_boundary)
+fl_b1 <- mask(crop(c(fl_multi_spec, fl_indices), fl_b1_veg_zone), fl_b1_shoreline_boundary)
 plot(fl_b1)
+
+fl_b1_train_poly <- subset(fl_b1_train_poly, fl_b1_train_poly$type != "structure")
+fl_b1_train_poly <- subset(fl_b1_train_poly, fl_b1_train_poly$type != "bare")
 
 ## Sample classes
 ### number of sample points was selected arbitrarily
 set.seed(1287)
-classes_pnts <- spatSample(fl_train_poly, 50000, "random")
+classes_pnts <- spatSample(fl_b1_train_poly, 5000, "random")
+
+plot(fl_b1[[1]])
+plot(classes_pnts, add = T)
 
 ### insepect sample distribution
 as.data.frame(classes_pnts) %>%
@@ -288,6 +353,8 @@ as.data.frame(classes_pnts) %>%
 
 ### convert the sample points to a matrix with coordinates for each location
 sample_xy <- as.matrix(geom(classes_pnts)[,c('x','y')])
+length(sample_xy)
+length(sample_xy[!duplicated(sample_xy[,1]),])
 
 ### extract the values of the basin 1 raster at each sample coordinate
 class_df <- terra::extract(fl_b1, sample_xy)
@@ -295,6 +362,7 @@ class_df <- terra::extract(fl_b1, sample_xy)
 ### create df for modelling by combining raster values and manual id names
 sampdata <- data.frame(class = classes_pnts$type, class_df)
 
+set.seed(1287)
 cartmodel <- rpart(as.factor(class)~., data = sampdata,
                    method = 'class', minsplit = 5)
 print(cartmodel)
@@ -314,11 +382,11 @@ lc
 cls <- c("algae","bare","structure", "veg", "water")
 df <- data.frame(id = 1:5, class=cls)
 levels(lc) <- df
-lc
+as.numeric(lc)
 
 plot(lc)
 
-writeRaster(lc, here("tmp/cart_output.tif"))
+writeRaster(lc, here("tmp/cart_output.tif"), overwrite = T)
 
 ### k-fold validataion
 #### data is split into k groups and the model is refit with one group being
@@ -353,7 +421,7 @@ colnames(y) <- c('observed', 'predicted')
 conmat <- table(y)
 # change the name of the classes
 colnames(conmat) <- c("algae","veg", "water")
-rownames(conmat) <- c("algae","bare","structure", "veg", "water")
+rownames(conmat) <- c("algae", "veg", "water")
 print(conmat)
 
 ### Calculate overall accuracy
