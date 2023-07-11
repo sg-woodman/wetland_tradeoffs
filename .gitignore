@@ -62,6 +62,9 @@ data/
 tmp/
 snippets/
 output/
+notes/
+presentations/
+documents/
 
 # Other
 .DS_Store
