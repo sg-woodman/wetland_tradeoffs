@@ -33,35 +33,14 @@ library(terra)
 
 fl <- vect(here("data/raw/fl_hydrolake_polygon.gpkg"))
 
-fl_shoreline_boundary <- vect(here("data/raw/fl_shoreline_boundary.gpkg"))
-fl_shoreline_edge <- vect(here("data/raw/fl_shoreline_edge.gpkg"))
+fl_b1_shoreline_boundary <- vect(here("data/raw/fl_b1_shoreline_boundary.gpkg"))
+fl_b1_shoreline_edge <- vect(here("data/raw/fl_b1_shoreline_edge.gpkg"))
 
-fl_shoreline_boundary_pan <- vect(here("data/raw/fl_shoreline_boundary_pan.gpkg"))
-fl_shoreline_edge_pan <- vect(here("data/raw/fl_shoreline_edge_pan.gpkg"))
+fl_b2_shoreline_boundary <- vect(here("data/raw/fl_b2_shoreline_boundary.gpkg"))
+fl_b2_shoreline_edge <- vect(here("data/raw/fl_b2_shoreline_edge.gpkg"))
 
 
 # Process data ------------------------------------------------------------
-
-## Lake Buffer ----
-
-### Use the HydroLakes polygon to determine vegetation zone. 
-
-#### capture terrestrial vegetation
-fl_outer_buff_100m <- buffer(fl, 100)
-
-#### capture aquatic vegetation
-fl_inner_buff_100m <- buffer(fl, -100)
-
-#### remove inner buffer from outer
-fl_buff_zone <- erase(fl_outer_buff_100m, fl_inner_buff_100m)
-plot(fl_buff_zone)
-
-writeVector(fl_buff_zone, here("tmp/fl_100m_buff.gpkg"))
-
-#### extract indeces values for buffer zone
-test <- mask(fl_exg, fl_buff_zone)
-plot(test)
-length(cells(test))
 
 ## Manual delineation ----
 
@@ -75,26 +54,23 @@ length(cells(test))
 
 ### Google Earth View
 #### visualize zones 
-plot(fl_shoreline_boundary)
-lines(fl_shoreline_edge)
+plot(fl_b1_shoreline_boundary)
+lines(fl_b1_shoreline_edge)
+
+plot(fl_b2_shoreline_boundary)
+lines(fl_b2_shoreline_edge)
 
 #### remove inner boundary from outer
-fl_veg_zone <- erase(fl_shoreline_boundary, fl_shoreline_edge)
-plot(fl_veg_zone)
+fl_b1_veg_zone <- erase(fl_b1_shoreline_boundary, fl_b1_shoreline_edge)
+plot(fl_b1_veg_zone)
+
+fl_b2_veg_zone <- erase(fl_b2_shoreline_boundary, fl_b2_shoreline_edge)
+plot(fl_b2_veg_zone)
 
 #### save output
-writeVector(fl_veg_zone, here("data/processed/fl_veg_zone.gpkg"))
+writeVector(fl_b1_veg_zone, here("data/processed/fl_b1_veg_zone.gpkg"))
 
-### WorldView Pan
-#### visualize zones 
-plot(fl_shoreline_boundary_pan)
-lines(fl_shoreline_edge_pan)
+writeVector(fl_b2_veg_zone, here("data/processed/fl_b2_veg_zone.gpkg"))
 
-#### remove inner boundary from outer
-fl_veg_zone_pan <- erase(fl_shoreline_boundary_pan, fl_shoreline_edge_pan)
-plot(fl_veg_zone_pan)
-
-#### save output
-writeVector(fl_veg_zone_pan, here("data/processed/fl_veg_zone_pan.gpkg"))
 
 
