@@ -26,6 +26,7 @@ options(scipen = 6, digits = 4)
 library(tidyverse)
 library(here)
 
+library(terra)
 library(sf)
 library(lwgeom)
 library(tidyterra)
@@ -39,6 +40,10 @@ fl_b2_veg_zone <- vect(here("data/processed/fl_b2_veg_zone.gpkg"))
 ## Split lines
 b1_lines <- vect(here("data/raw/fl_basin1_split_lines.gpkg"))
 b2_lines <- vect(here("data/raw/fl_basin2_split_lines.gpkg"))
+b3_lines <- vect(here("data/raw/fl_b3_split_lines.gpkg"))
+
+## Basin polygon
+fl_b3 <- vect(here("data/raw/fl_b3_shoreline_boundary.gpkg"))
 
 # Process -----------------------------------------------------------------
 
@@ -82,7 +87,7 @@ plot(fl_b1_veg_zone_split, "id", col=rainbow(5))
 text(fl_b1_veg_zone_split, "id", cex=.8, halo=TRUE)
 
 ### save output
-writeVector(fl_b1_veg_zone_split, here("data/processed/fl_b1_veg_zones.gpkg"), overwrite = T)
+writeVector(fl_b1_veg_zone_split, here("data/processed/fl_b1_regions.gpkg"), overwrite = T)
 
 ## Basin 2
 ### split veg zone polygon by lines
@@ -112,4 +117,34 @@ plot(fl_b2_veg_zone_split, "id", col=rainbow(5))
 text(fl_b2_veg_zone_split, "id", cex=.8, halo=TRUE)
 
 
-writeVector(fl_b2_veg_zone_split, here("data/processed/fl_b2_veg_zones.gpkg"), overwrite = T)
+writeVector(fl_b2_veg_zone_split, here("data/processed/fl_b2_regions.gpkg"), overwrite = T)
+
+## Basin 3
+### split veg zone polygon by lines
+fl_b3_split <- terra::split(fl_b3, b3_lines)
+plot(fl_b3_split)
+
+### assign each split segment an id number
+fl_b3_split$id <- 1:nrow(fl_b3_split)
+
+### confirm id fix
+fl_b3_split$id
+
+plot(fl_b3_split, "id", col=rainbow(nrow(fl_b3_split)))
+text(fl_b3_split, "id", cex=.8, halo=TRUE)
+
+### manually assign id to each zone based on above plot
+fl_b3_split$id2 <- c(4, 3, 2, 2, 1, 1)
+
+plot(fl_b3_split, "id2", col=rainbow(5))
+text(fl_b3_split, "id2", cex=.8, halo=TRUE)
+
+fl_b3_split <- aggregate(fl_b3_split, "id2")  %>% 
+  rename(id = id2) %>% 
+  select(id)
+
+plot(fl_b3_split, "id", col=rainbow(5))
+text(fl_b3_split, "id", cex=.8, halo=TRUE)
+
+
+writeVector(fl_b3_split, here("data/processed/fl_b3_regions.gpkg"), overwrite = T)
