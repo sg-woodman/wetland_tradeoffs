@@ -36,15 +36,15 @@ fl_indices <- rast(here("data/processed/fl_indices.tif"))
 ## Vector
 ### outer boundary of vegetation delineated using Google Earth imagery
 fl_b1_shoreline_boundary <- vect(here("data/raw/fl_b1_shoreline_boundary.gpkg"))
+fl_b2_shoreline_boundary <- vect(here("data/raw/fl_b2_shoreline_boundary.gpkg"))
+fl_b3_shoreline_boundary <- vect(here("data/raw/fl_b3_shoreline_boundary.gpkg"))
+
 ### vegetation zone using the Google earth delineated shoreline boundary and edge
 fl_b1_veg_zone <- vect(here("data/processed/fl_b1_veg_zone.gpkg"))
+fl_b2_veg_zone <- vect(here("data/processed/fl_b2_veg_zone.gpkg"))
 
 ### training polygons identifying water, veg, algae, bare ground, and structures
 fl_b1_train_poly <- vect(here("data/raw/fl_b1_training_data.gpkg"))
-
-### Veg regions
-fl_veg_zones_b1 <- vect(here("data/processed/fl_basin1_veg_zones.gpkg"))
-
 
 
 # Extract areas of interest -----------------------------------------------
@@ -59,7 +59,6 @@ fl_rast_b1_full <- crop(fl_rast, fl_b1_shoreline_boundary)
 plot(fl_rast_b1_full)
 plot(fl_rast_b1_full[[13]])
 
-
 ### Crop/Rangeland removed
 #### google earth 
 fl_rast_b1 <- mask(crop(fl_rast, fl_b1_shoreline_boundary),
@@ -67,12 +66,45 @@ fl_rast_b1 <- mask(crop(fl_rast, fl_b1_shoreline_boundary),
 plot(fl_rast_b1)
 plot(fl_rast_b1[[13]])
 
-
 ### Vegetation zone
 #### google veg zone
 fl_b1_veg_zone <- mask(crop(fl_rast, fl_b1_veg_zone), fl_b1_veg_zone)
 plot(fl_b1_veg_zone)
 plot(fl_b1_veg_zone[[13]])
+
+## Basin 2
+### Full area
+#### google earth 
+fl_rast_b2_full <- crop(fl_rast, fl_b2_shoreline_boundary)
+plot(fl_rast_b2_full)
+plot(fl_rast_b2_full[[13]])
+
+### Crop/Rangeland removed
+#### google earth 
+fl_rast_b2 <- mask(crop(fl_rast, fl_b2_shoreline_boundary),
+                   fl_b2_shoreline_boundary) 
+plot(fl_rast_b2)
+plot(fl_rast_b2[[13]])
+
+### Vegetation zone
+#### google veg zone
+fl_b2_veg_zone <- mask(crop(fl_rast, fl_b2_veg_zone), fl_b2_veg_zone)
+plot(fl_b2_veg_zone)
+plot(fl_b2_veg_zone[[13]])
+
+## Basin 3
+### Full area
+#### google earth 
+fl_rast_b3_full <- crop(fl_rast, fl_b3_shoreline_boundary)
+plot(fl_rast_b3_full)
+plot(fl_rast_b3_full[[13]])
+
+### Crop/Rangeland removed
+#### google earth 
+fl_rast_b3 <- mask(crop(fl_rast, fl_b3_shoreline_boundary),
+                   fl_b3_shoreline_boundary) 
+plot(fl_rast_b3)
+plot(fl_rast_b3[[13]])
 
 
 # Visualise ---------------------------------------------------------------
@@ -81,6 +113,13 @@ plotRGB(crop(stretch(fl_indices[[c("NDVI1", "EVI", "NDWI")]]), fl_b1_shoreline_b
 plotRGB(crop(stretch(fl_indices[[c("NDVI1", "NHFD", "NDWI")]]), fl_b1_shoreline_boundary))
 plotRGB(crop(stretch(fl_indices[[c("EVI", "Chlr_redEdge", "NDWI")]]), fl_b1_shoreline_boundary))
 
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "EVI", "NDWI")]]), fl_b2_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "NHFD", "NDWI")]]), fl_b2_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("EVI", "Chlr_redEdge", "NDWI")]]), fl_b2_shoreline_boundary))
+
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "EVI", "NDWI")]]), fl_b3_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("NDVI1", "NHFD", "NDWI")]]), fl_b3_shoreline_boundary))
+plotRGB(crop(stretch(fl_indices[[c("EVI", "Chlr_redEdge", "NDWI")]]), fl_b3_shoreline_boundary))
 
 # Model -------------------------------------------------------------------
 
@@ -189,6 +228,7 @@ writeRaster(clust_ind_b1, here("tmp/clust_ind_b1.tif"), overwrite = T)
 
 
 #### all data
+##### basin 1
 ##### convert raster to df without removing NAs
 fl_all_b1_df <- as.data.frame(fl_b1_veg_zone, na.rm = F)
 ##### create an allex of cell values 
@@ -198,13 +238,13 @@ idx_all_b1 <- as.data.frame(fl_b1_veg_zone, na.rm = F, cells = T) %>%
 idx_all_b1 <- idx_all_b1[-unique(which(is.na(fl_all_b1_df), arr.ind=TRUE)[,1])]  
 ##### cluster, remove NAs and scale
 set.seed(1284)
-fl_clus_all_b1 <- cluster::clara(na.omit(scale(fl_all_b1_df)), k=4)
+fl_clus_all_b1 <- cluster::clara(na.omit(scale(fl_all_b1_df)), k=3)
 ##### plot
 clust_all_b1 <- fl_b1_veg_zone[[1]] 
 clust_all_b1[] <- NA
 clust_all_b1[idx_all_b1] <- fl_clus_all_b1$clustering
 plot(clust_all_b1) 
-writeRaster(clust_all_b1, here("tmp/clust_all_b1.tif"), overwrite = T)
+writeRaster(clust_all_b1, here("output/clust_all_b1_k3.tif"), overwrite = T)
 
 aoi_poly <- as.polygons(aoi)
 
@@ -216,6 +256,41 @@ ggplot() +
                     na.translate = F) + 
   theme_classic()
 
+##### basin 2
+##### convert raster to df without removing NAs
+fl_all_b2_df <- as.data.frame(fl_b2_veg_zone, na.rm = F)
+##### create an allex of cell values 
+idx_all_b2 <- as.data.frame(fl_b2_veg_zone, na.rm = F, cells = T) %>% 
+  pull(cell)
+##### remove all NAs from idex
+idx_all_b2 <- idx_all_b2[-unique(which(is.na(fl_all_b2_df), arr.ind=TRUE)[,1])]  
+##### cluster, remove NAs and scale
+set.seed(1284)
+fl_clus_all_b2 <- cluster::clara(na.omit(scale(fl_all_b2_df)), k=3)
+##### plot
+clust_all_b2 <- fl_b2_veg_zone[[1]] 
+clust_all_b2[] <- NA
+clust_all_b2[idx_all_b2] <- fl_clus_all_b2$clustering
+plot(clust_all_b2) 
+writeRaster(clust_all_b2, here("output/clust_all_b2_k3.tif"), overwrite = T)
+
+##### basin 3
+##### convert raster to df without removing NAs
+fl_all_b3_df <- as.data.frame(fl_rast_b3, na.rm = F)
+##### create an allex of cell values 
+idx_all_b3 <- as.data.frame(fl_rast_b3, na.rm = F, cells = T) %>% 
+  pull(cell)
+##### remove all NAs from idex
+idx_all_b3 <- idx_all_b3[-unique(which(is.na(fl_all_b3_df), arr.ind=TRUE)[,1])]  
+##### cluster, remove NAs and scale
+set.seed(1284)
+fl_clus_all_b3 <- cluster::clara(na.omit(scale(fl_all_b3_df)), k=4)
+##### plot
+clust_all_b3 <- fl_rast_b3[[1]] 
+clust_all_b3[] <- NA
+clust_all_b3[idx_all_b3] <- fl_clus_all_b3$clustering
+plot(clust_all_b3) 
+writeRaster(clust_all_b3, here("output/clust_all_b3_k3.tif"), overwrite = T)
 
 #### Outcome ----
 #### Clara clustering (a method similar to K-mean clustering for large data) 
