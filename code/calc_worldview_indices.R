@@ -153,6 +153,9 @@ plot(fl_mcari)
 fl_indices <- c(fl_ndvi1, fl_ndvi2, fl_exg, fl_chlr_g, fl_chlr_re,
                     fl_gli, fl_cvi, fl_evi, fl_ndwi, fl_ndsi, fl_nhfd, fl_mcari)
 
+rm(fl_ndvi1, fl_ndvi2, fl_exg, fl_chlr_g, fl_chlr_re,
+                fl_gli, fl_cvi, fl_evi, fl_ndwi, fl_ndsi, fl_nhfd, fl_mcari)
+
 plot(fl_indices)
 
 writeRaster(fl_indices, here("data/processed/fl_indices.tif"), overwrite = T,
