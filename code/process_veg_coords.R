@@ -58,7 +58,7 @@ df_dd <- veg_df %>%
          lon = longitude_W) %>% 
   # convert to numeric
   mutate(lat = as.numeric(lat), 
-         lon = as.numeric(lon))
+         lon = as.numeric(lon)*-1)
 
 ## Subset and process data with DMS as lat/lan
 df_dms <- veg_df %>% 
@@ -88,6 +88,8 @@ df_dms <- veg_df %>%
   # remove degree, minute, second columns
   select(-starts_with(c("lat_", "lon_")))
 
+bind_rows(df_dms, df_dd) %>% view
+
 ## Convert to spatial df
 veg_coord_df <- bind_rows(df_dms, df_dd) %>% # bind dms and dd dfs
   # convert to sf 
@@ -98,6 +100,7 @@ veg_coord_df <- bind_rows(df_dms, df_dd) %>% # bind dms and dd dfs
 # Save output -------------------------------------------------------------
 
 veg_coord_df %>% 
-  st_write(., here("data/processed/veg_coords.gpkg"))
+  st_write(., here("data/processed/veg_coords.gpkg"), 
+           overwrite = T, delete_dsn = TRUE)
 
 
