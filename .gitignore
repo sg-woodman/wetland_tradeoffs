@@ -51,7 +51,6 @@ rsconnect/
 # File types
 *.shp
 *.shx
-*.qmd
 *.prj
 *.dbf
 *.cpg
