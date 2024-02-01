@@ -123,7 +123,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "Wetland area (m<sup>-2</sup>)") + 
+  scale_y_continuous(name = "Wetland area (m<sup>2</sup>)") + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         axis.title.y = element_markdown(),
@@ -192,8 +192,8 @@ df %>%
 #### Does the amount of emergent vegetation control aquatic productivity?
 
 ```{r}
-#| fig.height: 6
-#| fig-width: 10
+#| fig-height: 8
+
 (((df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = aerial_gpp)) +
@@ -223,6 +223,22 @@ df %>%
                colour = "black") + 
   scale_y_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 20)) + 
+  scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
+                     limits = c(0, 80000)) + 
+  theme_classic2() + 
+  theme(axis.title.y = element_markdown(),
+        axis.title.x = element_markdown())) /
+  (df %>%
+  filter(land_class != "Both") %>% 
+  ggplot(aes(x = full_wetland_area_m2, y = aerial_gpp - aerial_r)) +
+  geom_point(aes(colour = land_class)) +
+  scale_colour_manual(name = "Land Use",
+                      values = c("#4fad3c","#f4be4a")) +
+  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
+               rr.digits = 2, p.digits = 2, small.p = T, 
+               colour = "black") + 
+  scale_y_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
                      limits = c(0, 80000)) + 
   theme_classic2() + 
@@ -260,6 +276,22 @@ df %>%
                colour = "black") + 
   scale_y_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 20)) + 
+  scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
+                     limits = c(0, 0.6)) + 
+  theme_classic2() + 
+  theme(axis.title.y = element_markdown(),
+        axis.title.x = element_markdown())) /
+  (df %>%
+  filter(land_class != "Both") %>% 
+  ggplot(aes(x = total_density, y = aerial_gpp - aerial_r)) +
+  geom_point(aes(colour = land_class)) +
+  scale_colour_manual(name = "Land Use",
+                      values = c("#4fad3c","#f4be4a")) +
+  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
+               rr.digits = 2, p.digits = 2, small.p = T, 
+               colour = "black") + 
+  scale_y_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
                      limits = c(0, 0.6)) + 
   theme_classic2() + 
@@ -457,7 +489,8 @@ df %>%
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
-  scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") + 
+  scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(0, 0.05)) + 
   scale_x_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 15)) + 
   theme_classic2() + 
@@ -510,9 +543,64 @@ df %>%
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
-  scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") + 
+  scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(0, 0.05)) + 
   scale_x_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 22)) + 
+  theme_classic2() + 
+  theme(legend.position = 'none',
+        axis.title.y = element_markdown(),
+        axis.title.x = element_markdown())) | 
+(df %>%
+  filter(land_class != "Both") %>% 
+  ggplot(aes(x = aerial_gpp - aerial_r, y = flux_co2)) +
+  geom_point(aes(colour = land_class)) +
+  geom_smooth(method = "lm", se = F,
+              colour = "black") + 
+  scale_colour_manual(name = "Land Use",
+                      values = c("#4fad3c","#f4be4a")) +
+  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
+               rr.digits = 2, p.digits = 2, small.p = T, 
+               colour = "black") + 
+  scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(0,300)) + 
+  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
+  theme_classic2() + 
+  theme(legend.position = 'none',
+        axis.title.y = element_markdown(),
+        axis.title.x = element_blank())) /
+(df %>%
+  filter(land_class != "Both") %>% 
+  ggplot(aes(x = aerial_gpp - aerial_r, y = flux_ch4)) +
+  geom_point(aes(colour = land_class)) +
+  scale_colour_manual(name = "Land Use",
+                      values = c("#4fad3c","#f4be4a")) +
+
+  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
+               rr.digits = 2, p.digits = 2, small.p = T, 
+               colour = "black") + 
+  scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(0,100)) + 
+  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
+  theme_classic2() + 
+  theme(legend.position = 'none',
+        axis.title.y = element_markdown(),
+        axis.title.x = element_blank())) /
+(df %>%
+  filter(land_class != "Both") %>% 
+  ggplot(aes(x = aerial_gpp - aerial_r, y = flux_n2o)) +
+  geom_point(aes(colour = land_class)) +
+  scale_colour_manual(name = "Land Use",
+                      values = c("#4fad3c","#f4be4a")) +
+  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
+               rr.digits = 2, p.digits = 2, small.p = T, 
+               colour = "black") + 
+  scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(0, 0.05)) + 
+  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
   theme_classic2() + 
   theme(legend.position = 'none',
         axis.title.y = element_markdown(),
@@ -558,7 +646,6 @@ df %>%
 #### Does higher of emergent vegetation increase biodiversity?
 
 ```{r}
-#| fig-width: 10
 (((df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_mass_Mg, y = wet_bird_richness)) +
@@ -591,7 +678,7 @@ df %>%
   theme_classic2() + 
   theme(legend.position = 'none',
         axis.title.y = element_markdown(),
-        axis.title.x = element_blank()))) |
+        axis.title.x = element_markdown()))) |
 
 
 ((df %>%
@@ -606,7 +693,8 @@ df %>%
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
-                     limits = c(0, 80000)) + 
+                     limits = c(0, 80000), 
+                     breaks = seq(0, 80000, 40000)) + 
   theme_classic2() + 
   theme(legend.position = 'none',
         axis.title.y = element_markdown(),
@@ -623,11 +711,12 @@ df %>%
   scale_y_continuous(name = "Wetland bird evenness",
                      limits = c(0.8, 1.1)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
-                     limits = c(0, 80000)) + 
+                     limits = c(0, 80000), 
+                     breaks = seq(0, 80000, 40000)) + 
   theme_classic2() + 
   theme(legend.position = 'none',
         axis.title.y = element_markdown(),
-        axis.title.x = element_blank()))) | 
+        axis.title.x = element_markdown()))) | 
 
 
 ((df %>%
@@ -663,7 +752,7 @@ df %>%
   theme_classic2() + 
   theme(legend.position = 'none',
         axis.title.y = element_markdown(),
-        axis.title.x = element_blank())))) + plot_layout(guides = "collect")
+        axis.title.x = element_markdown())))) + plot_layout(guides = "collect")
   
 ```
 
@@ -741,7 +830,7 @@ df %>%
 
 ((df %>%
   filter(land_class != "Both") %>%
-  ggplot(aes(x = aerial_gpp/aerial_r, y = wet_bird_richness)) +
+  ggplot(aes(x = aerial_gpp - aerial_r, y = wet_bird_richness)) +
   geom_point(aes(colour = land_class)) +
   scale_colour_manual(name = "Land Use",
                       values = c("#4fad3c","#f4be4a")) +
@@ -750,13 +839,14 @@ df %>%
                colour = "black") + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
-  scale_x_continuous(name = "GPP:R") + 
+  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
   theme_classic2() + 
   theme(axis.title.y = element_markdown(),
         axis.title.x = element_markdown())) /
   (df %>%
   filter(land_class != "Both") %>%
-  ggplot(aes(x = aerial_gpp/aerial_r, y = wet_bird_evenness)) +
+  ggplot(aes(x = aerial_gpp - aerial_r, y = wet_bird_evenness)) +
   geom_point(aes(colour = land_class)) +
   scale_colour_manual(name = "Land Use",
                       values = c("#4fad3c","#f4be4a")) +
@@ -765,7 +855,8 @@ df %>%
                colour = "black") + 
   scale_y_continuous(name = "Wetland bird evenness",
                      limits = c(0.8, 1.1)) + 
-  scale_x_continuous(name = "GPP:R") + 
+  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
+                     limits = c(-10, 2)) + 
   theme_classic2() + 
   theme(axis.title.y = element_markdown(),
         axis.title.x = element_markdown())))) + plot_layout(guides = "collect")
