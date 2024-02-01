@@ -54,6 +54,7 @@ library(patchwork)
 library(ggpubr)
 library(gridtext)
 library(ggpmisc)
+library(ggsignif)
 ```
 
 ```{r}
@@ -113,7 +114,13 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "Total biomass (Mg)") + 
+  scale_y_continuous(name = "Total biomass (Mg)", 
+                     limits = c(0, 30)) + 
+   geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) +
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none')) / 
@@ -123,7 +130,13 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "Wetland area (m<sup>2</sup>)") + 
+  scale_y_continuous(name = "Wetland area (m<sup>2</sup>)", 
+                     limits = c(0, 90000)) + 
+   geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         axis.title.y = element_markdown(),
@@ -135,6 +148,11 @@ df %>%
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
   scale_y_continuous(name = "Density of wetland emergent vegetation (kg m<sup>-2</sup>)") + 
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         axis.title.y = element_markdown(),
@@ -170,7 +188,12 @@ df %>%
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
   scale_y_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(0, 22)) + 
+                     limits = c(0, 25)) + 
+   geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -182,7 +205,12 @@ df %>%
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
   scale_y_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                      limits = c(0, 22)) + 
+                      limits = c(0, 25)) + 
+    geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -195,6 +223,11 @@ df %>%
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
   scale_y_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                       limits = c(-10, 2)) + 
+    geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -205,7 +238,13 @@ df %>%
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "GPP:R<sub>aq</sub>") + 
+  scale_y_continuous(name = "GPP:R<sub>aq</sub>", 
+                     limits = c(0.2, 1.2)) + 
+    geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -334,7 +373,12 @@ df %>%
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") + 
+  scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") +
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -345,7 +389,12 @@ df %>%
              fill = land_class)) + 
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
-  scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") + 
+  scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") +
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -357,6 +406,11 @@ df %>%
   geom_boxplot() + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)") + 
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
         legend.position = 'none',
@@ -644,6 +698,11 @@ df %>%
   geom_boxplot() + 
   scale_y_continuous(name = "Richness") + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   facet_wrap(~group, scales = "free_y") + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
@@ -659,6 +718,11 @@ df %>%
   geom_boxplot() + 
   scale_y_continuous(name = "Evenness") + 
   scale_fill_manual(values = c("#4fad3c","#f4be4a")) + 
+  geom_signif(
+    comparisons = list(c("Cropland", "Grassland")),
+    map_signif_level = TRUE,
+    tip_length = 0
+  ) + 
   facet_wrap(~group, scales = "free_y") + 
   theme_classic2() + 
   theme(axis.title.x = element_blank(), 
