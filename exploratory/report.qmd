@@ -55,7 +55,8 @@ library(ggpmisc)
 ```
 
 ```{r}
-df <- read_csv(here("data/processed/tradeoff_df.csv"))
+df <- read_csv(here("data/processed/tradeoff_df.csv")) %>% 
+  select(-matches("up_bird|all_bird"))
 
 ```
 
