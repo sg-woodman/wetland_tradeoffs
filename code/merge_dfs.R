@@ -52,13 +52,13 @@ aqua_prod_df <- read_csv(here("data/processed/aqua_prod_2022.csv")) %>%
   select(-c(lat, long))
 emergent_veg_area_df <- read_csv(here("data/processed/emergent_veg_area_df.csv")) %>% 
   # fix site to match skeleton df
-  mutate(site = str_replace(site, "_", "-"))
+  mutate(site = str_replace_all(site, "_", "-"))
 spectra_biomass_df <- read_csv(here("data/processed/spectra_biomass_df.csv")) %>% 
   # fix site to match skeleton df
-  mutate(site = str_replace(site, "_", "-"))
+  mutate(site = str_replace_all(site, "_", "-"))
 wetland_area_df <- read_csv(here("data/processed/wetland_area_df.csv")) %>% 
   # fix site to match skeleton df
-  mutate(site = str_replace(site, "_", "-"))
+  mutate(site = str_replace_all(site, "_", "-"))
 flux_df <- read_xlsx("/Users/sam/Downloads/BCRC-ppr-ghg-2022.xlsx",
                      sheet = 2) %>%
   janitor::clean_names() %>% 
@@ -73,13 +73,13 @@ flux_df <- read_xlsx("/Users/sam/Downloads/BCRC-ppr-ghg-2022.xlsx",
 bubble_trap_df <- read_xlsx("/Users/sam/Downloads/Bubble trap calculations_withsamplelosscorrection.xlsx") %>% 
   janitor::clean_names() %>% 
   # fix site to match skeleton df
-  mutate(site = str_replace(site, "_", "-")) %>% 
+  mutate(site = str_replace_all(site, "_", "-")) %>% 
   dplyr::select(site, sampling_date, ch4mmol_m_2_d_1) %>% 
   group_by(site) %>% 
   summarise(ebullition_mean_ch4mmol_m_2_d_1 = mean(ch4mmol_m_2_d_1, na.rm = T))
 diversity_df <- read_csv(here("data/processed/diversity_df.csv")) %>% 
   # fix site to match skeleton df
-  mutate(site = str_replace(site, "_", "-"))
+  mutate(site = str_replace_all(site, "_", "-"))
 
 
 
@@ -98,7 +98,8 @@ df <- skeleton_df %>%
   mutate(total_density = (total_mass_Mg*1000)/full_wetland_area_m2) %>% 
   left_join(., diversity_df)
 
-view(df)
+df %>% 
+  select(site, total_density, land_class) %>% view
 
 write_csv(df, here("data/processed/tradeoff_df.csv"))
 
