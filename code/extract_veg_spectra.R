@@ -127,7 +127,7 @@ drone_list <- list.files(path = here("data/raw/drone_imagery"),
   keep(., ~!str_detect(.x, "ElevationToolbox")) %>% 
   keep(., ~!str_detect(.x, "_dtm")) %>% 
   keep(., ~str_detect(.x, veg_site_vec)) %>% 
-  keep(., ~!str_detect(.x, "AB11|AB12|ABDB10|ABDB11|ABDB13|ABDB14|ABDB15ABDB16")) %>% 
+  keep(., ~!str_detect(.x, "AB11|AB12|ABDB10|ABDB11|ABDB13|ABDB14|ABDB15|ABDB16")) %>% 
   keep(., ~!str_detect(.x, "TueAug08220421259267/ABDB1"))
 
 outline_names <- list.files(path = here("data/raw/wetland_polygons/"), 
@@ -161,14 +161,14 @@ ab_outlines <- list.files(path = here("data/raw/wetland_polygons"),
 wetland_area_df <- ab_outlines %>% 
   mutate(full_wetland_area_m2 = as.numeric(st_area(.))) %>% 
   st_set_geometry(NULL) %>%
-  .[1:9,] %>% 
+  #.[1:9,] %>% 
   bind_cols(list.files(path = here("data/raw/wetland_polygons/"), 
                        pattern = "*gpkg",
                        full.names = F) %>% 
               keep(., ~str_detect(.x, "outline")) %>% 
               as_vector() %>% 
               str_replace(., "_outline.gpkg", "") %>% 
-              .[1:9] %>% 
+              #.[1:9] %>% 
               as.data.frame() %>% 
               rename(site = ".")) %>% 
   dplyr::select(-site_matcher) %>% 
@@ -339,6 +339,7 @@ mod_df %>%
 sat_mod <- lm(log(mass_kg_m2) ~ log(mean.SAT), data = mod_df)
 summary(sat_mod)
 
+library(equatiomatic)
 print(extract_eq(sat_mod, use_coefs = T))
 
 lmodel2::lmodel2(log(mass_kg) ~ log(mean.SAT), data = mod_df)
@@ -351,7 +352,7 @@ biomass_sat_fig <- mod_df %>%
   scale_y_log10(name = "Biomass (kg)") + 
   scale_x_log10(name = "Overall saturation index") + 
   geom_smooth(method = "lm", se = F,
-              linetype = "solid", colour = "red", size = 5) + 
+              linetype = "solid", colour = "red", linewidth = 5) + 
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T,
                size = 15, colour = "black") + 
