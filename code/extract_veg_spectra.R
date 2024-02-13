@@ -137,7 +137,7 @@ outline_names <- list.files(path = here("data/raw/wetland_polygons/"),
   as_vector() %>% 
   str_replace(., "_outline.gpkg", "") %>% 
   str_replace(., "_0", "_") %>% 
-  str_replace(., "_", "") %>% 
+  str_replace_all(., "_", "") %>% 
   str_replace(., "SKC", "PK") %>% 
   str_replace(., "_1", "1") %>% 
   str_replace(., "B_", "B") %>% 
@@ -148,19 +148,38 @@ ab_outlines <- list.files(path = here("data/raw/wetland_polygons"),
            pattern = "*gpkg",
            full.names = T) %>% 
   keep(., ~str_detect(.x, "outline")) %>% 
+  # selct on AB sites
+  .[1:45] %>% 
+  map(st_read) %>% 
+  # convert so sf abject from sfc (need to do for binding)
+  map(\(x) st_transform(x, st_crs(2956))) %>% # 2956 for AB, 2957 for SK
+  # bind to a single df
+  bind_rows() %>% 
+  filter(., !st_is_empty(.)) %>% 
+  mutate(site_matcher = outline_names[1:45])
+
+sk_outlines <- list.files(path = here("data/raw/wetland_polygons"), 
+                          pattern = "*gpkg",
+                          full.names = T) %>% 
+  keep(., ~str_detect(.x, "outline")) %>% 
+  # selct on AB sites
+  .[46:61] %>% 
   map(st_read) %>% 
   # convert so sf abject from sfc (need to do for binding)
   map(\(x) st_transform(x, st_crs(2957))) %>% # 2956 for AB, 2957 for SK
   # bind to a single df
   bind_rows() %>% 
   filter(., !st_is_empty(.)) %>% 
-  mutate(site_matcher = outline_names)
+  mutate(site_matcher = outline_names[46:61])
 
 
 
 wetland_area_df <- ab_outlines %>% 
   mutate(full_wetland_area_m2 = as.numeric(st_area(.))) %>% 
   st_set_geometry(NULL) %>%
+  bind_rows(sk_outlines %>% 
+              mutate(full_wetland_area_m2 = as.numeric(st_area(.))) %>% 
+              st_set_geometry(NULL)) %>% 
   #.[1:9,] %>% 
   bind_cols(list.files(path = here("data/raw/wetland_polygons/"), 
                        pattern = "*gpkg",
