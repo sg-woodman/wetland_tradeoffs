@@ -130,31 +130,6 @@ Wetlands, unlike lakes and rivers, often have a greater ratio of shoreline to op
 
 To determine the productivity of emergent vegetation along the wetland edge I will use a combination of advanced remote sensing and traditional ground-based measures of biomass. Using uncrewed aerial vehicles (UAVs), I will collect high-resolution imagery of wetlands at the end of the growing season to produce robust images to estimate vegetation type and density24,25 . To differentiate landscape characteristics, spectral indices and methods including spatial clustering26 and machine learning27 will be used to identify the extent of emergent vegetation around each wetland. I will collect biomass samples from a subset of six wetlands (3 sites per wetlands) in each province28 . Biomass samples will be processed (weight, C content) using standard methods29 . We will estimate total emergent vegetation productivity by scaling spectral properties with biomass and C content and applying the relationship to the entire wetland surface.
 
-#### Are difference in land use driven by latitude?
-
-```{r}
-df %>% 
-  filter(land_class != "Both") %>% 
-  ggplot(aes(x = latitude_y, y = total_mass_Mg)) + 
-  geom_point() + 
-  scale_y_continuous(name = "Total biomass (Mg)") + 
-  scale_x_reverse(name = "Latitude (°)", 
-                     limits = c(53.2, 50.5)) + 
-  theme_classic2() + 
-  theme(legend.position = 'top')
-
-df %>% 
-  filter(land_class != "Both") %>% 
-  ggplot(aes(x = latitude_y, y = full_wetland_area_m2)) + 
-  geom_point() + 
-  scale_y_continuous(name = "Wetland area (m<sup>2</sup>)") + 
-  scale_x_reverse(name = "Latitude (°)", 
-                     limits = c(53.2, 50.5)) + 
-  theme_classic2() + 
-  theme(legend.position = 'top', 
-        axis.title = element_markdown())
-```
-
 ## Aquatic productivity
 
 #### Does aquatic productivity differ with land use?
