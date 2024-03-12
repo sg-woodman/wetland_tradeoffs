@@ -55,6 +55,7 @@ library(ggpubr)
 library(gridtext)
 library(ggpmisc)
 library(ggsignif)
+library(rstatix)
 ```
 
 ```{r}
@@ -129,6 +130,14 @@ This document is separated into sections according to the data sets used as the 
 Wetlands, unlike lakes and rivers, often have a greater ratio of shoreline to open water, promoting greater inputs of terrestrial materials to aquatic habitats13. These inputs fuel microbial respiration14 and sustained GHG emissions from aquatic habitats15,16 . While this story is becoming clear, the role of emergent plant production in offsetting these emissions is not well understood. The C sequestered by emergent vegetation may sufficiently offset emissions from aquatic habitats to render PPR wetlands "C neutral". Further, wetlands within agricultural landscapes may also experience higher nutrient loading from upland livestock or fertilizer applications, which may alter emission patterns17 by enhancing algal production and aquatic C uptake that may lower emissions (e.g., Bogard et al. 201718). Conversely, soil disturbance by cropping can transfer organics to wetlands that may fuel GHG emissions9.
 
 To determine the productivity of emergent vegetation along the wetland edge I will use a combination of advanced remote sensing and traditional ground-based measures of biomass. Using uncrewed aerial vehicles (UAVs), I will collect high-resolution imagery of wetlands at the end of the growing season to produce robust images to estimate vegetation type and density24,25 . To differentiate landscape characteristics, spectral indices and methods including spatial clustering26 and machine learning27 will be used to identify the extent of emergent vegetation around each wetland. I will collect biomass samples from a subset of six wetlands (3 sites per wetlands) in each province28 . Biomass samples will be processed (weight, C content) using standard methods29 . We will estimate total emergent vegetation productivity by scaling spectral properties with biomass and C content and applying the relationship to the entire wetland surface.
+
+```{r}
+df %>% 
+  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) %>% 
+  filter(p <= 0.05) %>% 
+  filter(cor != 1) %>% 
+  filter(is.finite(statistic))
+```
 
 ## GHG fluxes
 
