@@ -56,6 +56,10 @@ library(gridtext)
 library(ggpmisc)
 library(ggsignif)
 library(rstatix)
+library(gt)
+library(simplermarkdown)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r}
@@ -89,10 +93,6 @@ We are experiencing a dual global crisis: climate change and biodiversity loss. 
 
 1.  We expect a positive relationship between emergent vegetation productivity, as aerial biomass, with both biodiversity and GHG fluxes.
 
-2.  We also expect aquatic productivity to scale with biodiversity but to have a mixed relationship with GHG fluxes because CO<sub>2</sub> should be negatively correlated with NEP due to more autotrophic production while higher NEP should increase CH<sub>4</sub> as the availability of substrate for methanogenous increase.
-
-3.  Finally, we hypothesis an inverse connection between emergent vegetation extent and NEP.
-
 ### Data sets
 
 This projects leverages several data sets collected across the PPR by DUC and the Bogard lab.
@@ -107,11 +107,6 @@ This projects leverages several data sets collected across the PPR by DUC and th
             -   biomass
             -   nutrient content (N, P, K, S)
             -   dominant species
-
-    -   aquatic productivity (2022 & 2023)
-
-        -   GPP
-        -   R
 
     -   GHG fluxes (2022 & 2023)
 
@@ -132,11 +127,31 @@ Wetlands, unlike lakes and rivers, often have a greater ratio of shoreline to op
 To determine the productivity of emergent vegetation along the wetland edge I will use a combination of advanced remote sensing and traditional ground-based measures of biomass. Using uncrewed aerial vehicles (UAVs), I will collect high-resolution imagery of wetlands at the end of the growing season to produce robust images to estimate vegetation type and density24,25 . To differentiate landscape characteristics, spectral indices and methods including spatial clustering26 and machine learning27 will be used to identify the extent of emergent vegetation around each wetland. I will collect biomass samples from a subset of six wetlands (3 sites per wetlands) in each province28 . Biomass samples will be processed (weight, C content) using standard methods29 . We will estimate total emergent vegetation productivity by scaling spectral properties with biomass and C content and applying the relationship to the entire wetland surface.
 
 ```{r}
+#| label: tbl-cars
+#| tbl-cap-location: top
 df %>% 
-  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) %>% 
-  filter(p <= 0.05) %>% 
+  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) %>%
+  # remove duplicated pairs
+  filter(!duplicated(paste0(pmax(var1, var2), pmin(var1, var2)))) %>% 
+  # filter to only p <= 0.1
+  filter(p <= 0.1) %>% 
+  # remove correlation between identical variables
   filter(cor != 1) %>% 
-  filter(is.finite(statistic))
+  # remove where statistic is Inf
+  filter(is.finite(statistic)) %>% 
+  rename("Variable 1" = var1,
+         "Variable 2" = var2,
+         "r" = cor,
+         "Statistic" = statistic, 
+         "p value" = p,
+         "Conf. low" = conf.low,
+         "Conf. high" = conf.high,) %>%
+  select(-method) %>% 
+  mutate(across(where(is.numeric), round, 2)) %>% 
+  kable(format = "html", caption = "Pearson correlation results") %>% 
+  kable_classic("basic", full_width = F) %>% 
+  row_spec(0, bold = T)
+  
 ```
 
 ## GHG fluxes
