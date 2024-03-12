@@ -33,7 +33,7 @@ veg_df <- read_xlsx(here("data/raw/veg_biomass.xlsx")) %>%
   # fix columns
   mutate(site = str_replace_all(site, "_", "-"), # convert _ to -
          date = as_date(date), # convert date to date format
-         mass_kg_m2 = mass_kg/0.1) %>% # convert to m2 using sample frame dimensions (0.5 cm x 0.2 cm)
+         mass_kg_m2 = mass_kg/0.1) %>% # convert to m2 using sample frame dimensions (0.5 m x 0.2 m)
   group_by(site) %>% 
   # calculate site level values
   summarise(mean_veg_kg_m2 = mean(mass_kg_m2, na.rm = T),
