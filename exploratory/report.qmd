@@ -140,9 +140,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = flux_co2)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,300)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
@@ -154,9 +154,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = flux_ch4)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)", 
                      limits = c(0, 100)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
@@ -169,9 +169,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   ggplot(aes(x = full_wetland_area_m2, y = flux_n2o)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(-0.01, 0.03)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
@@ -183,9 +183,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = flux_co2)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,300)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
@@ -197,11 +197,11 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = flux_ch4)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F, 
-              colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_smooth(method = "lm", formula = "y ~ x", se = F, 
+              colour = "grey75", linetype = "dashed") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)", 
                      limits = c(0, 100)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
@@ -214,9 +214,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   ggplot(aes(x = total_density, y = flux_n2o)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)"
                      ,
                      limits = c(-0.01, 0.03)) + 
@@ -237,9 +237,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_mass_Mg, y = wet_bird_richness)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "Total biomass (Mg)",
@@ -268,9 +268,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>%
   ggplot(aes(x = full_wetland_area_m2, y = wet_bird_richness)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
@@ -284,9 +284,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>%
   ggplot(aes(x = full_wetland_area_m2, y = wet_bird_evenness)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird evenness",
                      limits = c(0.8, 1.1)) + 
   scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
@@ -302,9 +302,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_density, y = wet_bird_richness)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
@@ -317,9 +317,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_density, y = wet_bird_evenness)) +
   geom_point() +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird evenness",
                      limits = c(0.8, 1.1)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
@@ -342,9 +342,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 400)) + 
   scale_x_continuous(name = "Wetland bird richness",
@@ -358,9 +358,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 400)) + 
   scale_x_continuous(name = "Wetland bird evenness",
@@ -373,9 +373,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_richness, y = flux_ch4)) + 
   geom_point() + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,150)) + 
   scale_x_continuous(name = "Wetland bird richness",
@@ -387,11 +387,11 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_evenness, y = flux_ch4)) + 
   geom_point() + 
-    geom_smooth(method = "lm", se = F,
+  geom_smooth(method = "lm", se = F,
                 linetype = "dashed", colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,150)) + 
   scale_x_continuous(name = "Wetland bird evenness",
@@ -406,9 +406,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,0.06)) + 
   scale_x_continuous(name = "Wetland bird richness",
@@ -422,9 +422,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,0.06)) + 
   scale_x_continuous(name = "Wetland bird evenness",
