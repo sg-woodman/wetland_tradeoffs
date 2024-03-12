@@ -139,9 +139,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (((df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = flux_co2)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -155,9 +153,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = flux_ch4)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -171,10 +167,8 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = full_wetland_area_m2, y = flux_n2o)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -188,9 +182,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   ((df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = flux_co2)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -204,9 +196,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = flux_ch4)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   geom_smooth(method = "lm", se = F, 
               colour = "black") + 
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
@@ -222,10 +212,8 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = flux_n2o)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -248,9 +236,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (((df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_mass_Mg, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -264,9 +250,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_mass_Mg, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -283,9 +267,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 ((df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = full_wetland_area_m2, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -301,9 +283,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = full_wetland_area_m2, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -321,9 +301,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 ((df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_density, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -338,9 +316,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = total_density, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -363,11 +339,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
 (((df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_richness, y = flux_co2)) + 
-  geom_point(aes(colour = land_class)) + 
+  geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -381,11 +355,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_evenness, y = flux_co2)) + 
-  geom_point(aes(colour = land_class)) + 
+  geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -400,9 +372,7 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   ((df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_richness, y = flux_ch4)) + 
-  geom_point(aes(colour = land_class)) + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() + 
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -416,11 +386,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_evenness, y = flux_ch4)) + 
-  geom_point(aes(colour = land_class)) + 
+  geom_point() + 
     geom_smooth(method = "lm", se = F,
                 linetype = "dashed", colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -435,11 +403,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   ((df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_richness, y = flux_n2o)) + 
-  geom_point(aes(colour = land_class)) + 
+  geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
@@ -453,11 +419,9 @@ To determine the productivity of emergent vegetation along the wetland edge I wi
   (df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_evenness, y = flux_n2o)) + 
-  geom_point(aes(colour = land_class)) + 
+  geom_point() + 
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
   stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
                rr.digits = 2, p.digits = 2, small.p = T, 
                colour = "black") + 
