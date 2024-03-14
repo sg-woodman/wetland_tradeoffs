@@ -47,7 +47,9 @@ aqua_prod_df <- read_csv(here("data/processed/aqua_prod_2022.csv")) %>%
   summarise(across(where(is.numeric), \(x) mean(x, na.rm = TRUE))) %>% 
   # calculate aerial productivity values according to Matt
   mutate(aerial_gpp = gpp.985*(depth/100),
-         aerial_r = r.985*(depth/100)) %>% 
+         aerial_r = r.985*(depth/100),
+         aerial_nep = aerial_gpp - aerial_r,
+         aeriel_ggp_r_ratio = aerial_gpp/aerial_r) %>% 
   # remove lat/lon to prevent redundancy with skeleton df
   select(-c(lat, long))
 emergent_veg_area_df <- read_csv(here("data/processed/emergent_veg_area_df.csv")) %>% 
