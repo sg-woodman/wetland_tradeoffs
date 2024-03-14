@@ -126,7 +126,6 @@ Wetlands, unlike lakes and rivers, often have a greater ratio of shoreline to op
 
 To determine the productivity of emergent vegetation along the wetland edge I will use a combination of advanced remote sensing and traditional ground-based measures of biomass. Using uncrewed aerial vehicles (UAVs), I will collect high-resolution imagery of wetlands at the end of the growing season to produce robust images to estimate vegetation type and density24,25 . To differentiate landscape characteristics, spectral indices and methods including spatial clustering26 and machine learning27 will be used to identify the extent of emergent vegetation around each wetland. I will collect biomass samples from a subset of six wetlands (3 sites per wetlands) in each province28 . Biomass samples will be processed (weight, C content) using standard methods29 . We will estimate total emergent vegetation productivity by scaling spectral properties with biomass and C content and applying the relationship to the entire wetland surface.
 
-
 ## Methods
 
 ### Study sites
@@ -139,7 +138,8 @@ The ??? wetlands surveyed covered a diverse range of sizes and morphologies (dep
 #| label: tbl-cars
 #| tbl-cap-location: top
 cor_df <- df %>% 
-  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) 
+  cor_test(total_density, full_wetland_area_m2, starts_with("aerial"),
+           starts_with("flux"), ends_with("richness")) 
 
 cor_df %>%
   # remove duplicated pairs
@@ -181,69 +181,17 @@ Correlation between GHG and richness
 
 ```{r}
 #| fig-height: 8
+#| fig-width: 4
 
-(((df %>%
-  filter(land_class != "Both") %>% 
-  ggplot(aes(x = full_wetland_area_m2, y = aerial_gpp)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  geom_smooth(method = "lm", se = F,
-              colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(0, 20)) + 
-  scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
-                     limits = c(0, 80000)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_blank())) /
 (df %>%
   filter(land_class != "Both") %>% 
-  ggplot(aes(x = full_wetland_area_m2, y = aerial_r)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(0, 20)) + 
-  scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
-                     limits = c(0, 80000)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) /
-  (df %>%
-  filter(land_class != "Both") %>% 
-  ggplot(aes(x = full_wetland_area_m2, y = aerial_gpp - aerial_r)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(-10, 2)) + 
-  scale_x_continuous(name = "Wetland area (m<sup>-2</sup>)",
-                     limits = c(0, 80000)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown()))) | 
-  
-  ((df %>%
-  filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = aerial_gpp)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   geom_smooth(method = "lm", se = F,
               linetype = "dashed", colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
   scale_y_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 20)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
@@ -254,42 +202,38 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = total_density, y = aerial_r)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   geom_smooth(method = "lm", se = F, 
               colour = "black") + 
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
   scale_y_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 20)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
                      limits = c(0, 0.6)) + 
   theme_classic2() + 
   theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) /
+        axis.title.x = element_blank())) /
   (df %>%
   filter(land_class != "Both") %>% 
-  ggplot(aes(x = total_density, y = aerial_gpp - aerial_r)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  ggplot(aes(x = total_density, y = aerial_nep)) +
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(-10, 2)) + 
   scale_x_continuous(name = "Density of wetland emergent<br>vegetation (kg m<sup>-2</sup>)",
                      limits = c(0, 0.6)) + 
   theme_classic2() + 
   theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())))) + plot_layout(guides = "collect")
+        axis.title.x = element_markdown()))
 ```
 
 ## GHG fluxes
 
-#### Does the amount of emergent vegetation control aquatic productivity?
+#### Does the amount of emergent vegetation control GHG fluxes?
 
 ```{r}
 #| fig-height: 10.66667
@@ -390,15 +334,14 @@ Correlation between GHG and richness
 
 ```{r}
 #| fig-height: 8
+#| fig-width: 6
 ((df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp, y = flux_co2)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,300)) + 
   scale_x_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -409,13 +352,10 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp, y = flux_ch4)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+   stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,100)) + 
   scale_x_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -427,14 +367,12 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp, y = flux_n2o)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 0.05)) + 
   scale_x_continuous(name = "GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -446,12 +384,10 @@ Correlation between GHG and richness
   (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_r, y = flux_co2)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,300)) + 
   scale_x_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -463,13 +399,10 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_r, y = flux_ch4)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,100)) + 
   scale_x_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -481,14 +414,12 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_r, y = flux_n2o)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 0.05)) + 
   scale_x_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -500,14 +431,12 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp - aerial_r, y = flux_co2)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_smooth(method = "lm", se = F,
               colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CO<sub>2 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,300)) + 
   scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -520,15 +449,12 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp - aerial_r, y = flux_ch4)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_smooth(method = "lm", se = F,
               linetype = "dashed", colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "CH<sub>4 *aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0,100)) + 
   scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -541,12 +467,10 @@ Correlation between GHG and richness
 (df %>%
   filter(land_class != "Both") %>% 
   ggplot(aes(x = aerial_gpp - aerial_r, y = flux_n2o)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "N<sub>2</sub>O <sub>*aq*</sub> (mmol m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 0.05)) + 
   scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
@@ -560,27 +484,11 @@ Correlation between GHG and richness
 
 ## Biodiversity
 
-
 #### Does higher of emergent vegetation increase biodiversity?
 
 ```{r}
 #| fig-height: 3.5
 #| fig-width: 8
-(df %>%
-  filter(land_class != "Both") %>%
-  ggplot(aes(x = total_mass_Mg, y = wet_bird_richness)) +
-  geom_point() +
-  stat_correlation(use_label(c("R", "P")),
-                   r.digits = 2, p.digits = 2,
-                   small.r = T, small.p = T) + 
-  scale_y_continuous(name = "Wetland bird richness",
-                     limits = c(0, 50)) + 
-  scale_x_continuous(name = "Total biomass (Mg)",
-                     limits = c(0, 25)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) |
-
 (df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = full_wetland_area_m2, y = wet_bird_richness)) +
@@ -595,7 +503,7 @@ Correlation between GHG and richness
                      breaks = seq(0, 80000, 40000)) + 
   theme_classic2() + 
   theme(legend.position = 'none',
-        axis.title.y = element_blank(),
+        axis.title.y = element_markdown(),
         axis.title.x = element_markdown())) | 
 
 
@@ -620,116 +528,63 @@ Correlation between GHG and richness
 #### Does aquatic productivity support higher avian biodiversity?
 
 ```{r}
-
-(((df %>%
+#| fig-height: 3.5
+#| fig-width: 8
+(df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = aerial_gpp, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous("GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(0, 22)) + 
   theme_classic2() + 
   theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) /
-  (df %>%
-  filter(land_class != "Both") %>%
-  ggplot(aes(x = aerial_gpp, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "Wetland bird evenness",
-                     limits = c(0.8, 1.1)) + 
-  scale_x_continuous("GPP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(0, 22)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown()))) |
+        axis.title.x = element_markdown())) |
 
 
-((df %>%
+(df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = aerial_r, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  geom_point() +
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                       limits = c(0, 22)) + 
   theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) /
-  (df %>%
-  filter(land_class != "Both") %>%
-  ggplot(aes(x = aerial_r, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "Wetland bird evenness",
-                     limits = c(0.8, 1.1)) + 
-  scale_x_continuous(name ="R<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                      limits = c(0, 22)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown()))) | 
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_markdown())) | 
 
 
-((df %>%
+(df %>%
   filter(land_class != "Both") %>%
   ggplot(aes(x = aerial_gpp - aerial_r, y = wet_bird_richness)) +
-  geom_point(aes(colour = land_class)) +
+  geom_point() +
   geom_smooth(method = "lm", se = F,
               linetype = "dashed", colour = "black") + 
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
+  stat_correlation(use_label(c("R", "P")),
+                   r.digits = 2, p.digits = 2,
+                   small.r = T, small.p = T) + 
   scale_y_continuous(name = "Wetland bird richness",
                      limits = c(0, 50)) + 
   scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
                      limits = c(-10, 2)) + 
   theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())) /
-  (df %>%
-  filter(land_class != "Both") %>%
-  ggplot(aes(x = aerial_gpp - aerial_r, y = wet_bird_evenness)) +
-  geom_point(aes(colour = land_class)) +
-  scale_colour_manual(name = "Land Use",
-                      values = c("#4fad3c","#f4be4a")) +
-  stat_poly_eq(mapping = use_label(c("adj.R2", "p.value")),
-               rr.digits = 2, p.digits = 2, small.p = T, 
-               colour = "black") + 
-  scale_y_continuous(name = "Wetland bird evenness",
-                     limits = c(0.8, 1.1)) + 
-  scale_x_continuous(name = "NEP<sub>*aq*</sub> (g O<sub>2</sub> m<sup>-2</sup> d<sup>-1</sup>)",
-                     limits = c(-10, 2)) + 
-  theme_classic2() + 
-  theme(axis.title.y = element_markdown(),
-        axis.title.x = element_markdown())))) + plot_layout(guides = "collect")
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_markdown()))
 ```
 
 #### Does higher diversity increase GHG fluxes?
 
 ```{r}
 #| fig-height: 6
-#| fig-width: 6
+#| fig-width: 4
 (df %>% 
   filter(land_class != "Both") %>% 
   ggplot(aes(x = wet_bird_richness, y = flux_co2)) + 
