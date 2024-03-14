@@ -87,7 +87,7 @@ biodiversity
 
 greenhouse gas sequestration
 
-We are experiencing a dual global crisis: climate change and biodiversity loss. Despite the importance of these crises, we have limited resources to address both. Wetlands have increasingly been considered as a nature-based climate solution that can address both carbon (C) sequestration and biodiversity1. Temperate grasslands, such as the Prairie Pothole Region (PPR) of Canada have the highest density of wetlands globally2, yet these ecosystems are continually threatened by agricultural development3. For example, by 1970 over 1.2 million hectares of wetlands were lost to the expansion of agricultural land across the Canadian prairies4 with Ducks Unlimited Canada (DUC) estimating an additional 0.4 million hectares have been lost since then. As a result, conservation of these systems is critical to prevent further loss of habitat and for the potential of these systems to mitigate climate change and biodiversity decline. However, current hypotheses suggest that productivity of wetlands will set up a trade-off between biodiversity and C sequestration5,6. Though higher productivity in wetlands supports greater biodiversity7, the anoxic conditions of wetlands can result in high emissions of greenhouse gases (GHG) such as methane and CO28,9. Conservation of wetlands may be threatened as these systems are seen as carbon emitters. Therefore, understanding trade-offs and identifying possible synergies between wetland productivity and biodiversity may promote their conservation while also addressing climate change and biodiversity loss.
+We are experiencing a dual global crisis: climate change and biodiversity loss. Despite the importance of these crises, we have limited resources to address both. Wetlands have increasingly been considered as a nature-based climate solution that can address both carbon (C) sequestration and biodiversity1. Temperate grasslands, such as the Prairie Pothole Region (PPR) of Canada have the highest density of wetlands globally2, yet these ecosystems are continually threatened by agricultural development3. For example, by 1970 over 1.2 million hectares of wetlands were lost to the expansion of agricultural land across the Canadian prairies4 with Ducks Unlimited Canada (DUC) estimating an additional 0.4 million hectares have been lost since then. As a result, conservation of these systems is critical to prevent further loss of habitat and for the potential of these systems to mitigate climate change and biodiversity decline. However, current hypotheses suggest that productivity of wetlands will set up a trade-off between biodiversity and C sequestration5,6. Though higher productivity in wetlands supports greater biodiversity7, the anoxic conditions of wetlands can result in high emissions of greenhouse gases (GHG) such as methane and CO<sub>2</sub>8,9. Conservation of wetlands may be threatened as these systems are seen as carbon emitters. Therefore, understanding trade-offs and identifying possible synergies between wetland productivity and biodiversity may promote their conservation while also addressing climate change and biodiversity loss.
 
 #### Hypotheses
 
@@ -126,11 +126,21 @@ Wetlands, unlike lakes and rivers, often have a greater ratio of shoreline to op
 
 To determine the productivity of emergent vegetation along the wetland edge I will use a combination of advanced remote sensing and traditional ground-based measures of biomass. Using uncrewed aerial vehicles (UAVs), I will collect high-resolution imagery of wetlands at the end of the growing season to produce robust images to estimate vegetation type and density24,25 . To differentiate landscape characteristics, spectral indices and methods including spatial clustering26 and machine learning27 will be used to identify the extent of emergent vegetation around each wetland. I will collect biomass samples from a subset of six wetlands (3 sites per wetlands) in each province28 . Biomass samples will be processed (weight, C content) using standard methods29 . We will estimate total emergent vegetation productivity by scaling spectral properties with biomass and C content and applying the relationship to the entire wetland surface.
 
+## Methods
+
+### Study sites
+
+We focused on ???? wetlands across the Prairie Pothole Region (PPR) of Alberta and Saskatchewan ranging from ????° to ????° latitude (Add Map). The region is characterized by extreme temperature variability, ranging from semi-arid in summer to a cold continental climate in winter, low precipitation, and strong winds (Add Weather Data). Land use is dominated by agriculture. (Add more about topography and water drainage)
+
+The ??? wetlands surveyed covered a diverse range of sizes and morphologies (depths??), ranging from small and shallow ponds (???? m<sup>2</sup> and ???? m) to large deep water bodies (???? m<sup>2</sup> and ???? m). Each site was sampled ???? times in the summer (Add date). (Add sampling for each analysis here or in the associated section)
+
 ```{r}
 #| label: tbl-cars
 #| tbl-cap-location: top
-df %>% 
-  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) %>%
+cor_df <- df %>% 
+  cor_test(total_density, full_wetland_area_m2, starts_with("flux"), ends_with("richness")) 
+
+cor_df %>%
   # remove duplicated pairs
   filter(!duplicated(paste0(pmax(var1, var2), pmin(var1, var2)))) %>% 
   # filter to only p <= 0.1
@@ -147,14 +157,22 @@ df %>%
          "Conf. low" = conf.low,
          "Conf. high" = conf.high,) %>%
   select(-method) %>% 
-  mutate(across(where(is.numeric), round, 2)) %>% 
-  kable(format = "html", caption = "Pearson correlation results") %>% 
-  kable_classic("basic", full_width = F) %>% 
-  row_spec(0, bold = T)
+  mutate(across(where(is.numeric), \(x) round(x, 2))) %>%
+  kbl(format = "markdown", caption = "Pearson correlation results") %>% 
+  kable_styling(full_width = F)
+  
+  
+  # kable(format = "markdown", caption = "Pearson correlation results") %>%
+  # kable_classic("basic", full_width = F) %>%
+  # row_spec(0, bold = T)
   
 ```
 
-## GHG fluxes
+## Results
+
+Emergent vegetation density correlations with GHG and richness
+
+Correlation between GHG and richness
 
 #### Does the amount of emergent vegetation control aquatic GHG fluxes?
 
